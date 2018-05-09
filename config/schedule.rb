@@ -1,6 +1,5 @@
 # coding: utf-8
 require File.expand_path(File.dirname(__FILE__) + "/environment")
-job_type :rbenv_bundle_rake, "export PATH=\"$HOME/.rbenv/bin:$PATH\"; eval \"$(rbenv init -)\"; cd :path && bundle exec script/rails rake -e :environment ':task' :output"
 
 set :output, 'log/crontab.log'
 set :environment, :development

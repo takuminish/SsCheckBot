@@ -3,10 +3,12 @@ namespace :shortstory do
   desc "ss_set"
   task :ss_set => :environment do
     doc = ss_scraping
-    title = doc.css(".entry-title")[0]['title']
-    url = doc.css(".entry-title")[0]['href']
-    ss = Shortstory.new(title: title,url: url)
-    ss.save
+    5.times do |k|
+      title = doc.css(".entry-title")[k]['title']
+      url = doc.css(".entry-title")[k]['href']
+      ss = Shortstory.new(title: title,url: url)
+      ss.save
+    end
 
   end
 end

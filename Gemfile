@@ -3,6 +3,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '2.5.0'
 
+gem 'activerecord-import'
 gem 'nokogiri'
 gem 'pry-rails'
 gem 'whenever', require: false

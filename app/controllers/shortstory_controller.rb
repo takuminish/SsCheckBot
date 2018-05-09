@@ -10,14 +10,13 @@ class ShortstoryController < ApplicationController
   end
 
   def create
-    doc = ss_scraping
-    title = doc.css(".entry-title")[0]['title']
-    url = doc.css(".entry-title")[0]['href']
-    @ss = Shortstory.new(title: title,url: url)
-    if @ss.save
-      redirect_to ss_path
-    else
-      render 'new'
+    5.times do |k| 
+      doc = ss_scraping
+      title = doc.css(".entry-title")[k]['title']
+      url = doc.css(".entry-title")[k]['href']
+      @ss = Shortstory.new(title: title,url: url)
+      @ss.save
+     
     end
   end
 
