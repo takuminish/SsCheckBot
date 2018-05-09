@@ -2,7 +2,8 @@ source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '2.5.0'
-
+gem 'http'
+gem 'json'
 gem 'activerecord-import'
 gem 'nokogiri'
 gem 'pry-rails'

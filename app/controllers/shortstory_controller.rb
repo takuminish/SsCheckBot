@@ -15,8 +15,7 @@ class ShortstoryController < ApplicationController
       title = doc.css(".entry-title")[k]['title']
       url = doc.css(".entry-title")[k]['href']
       @ss = Shortstory.new(title: title,url: url)
-      @ss.save
-     
+      @ss.save     
     end
   end
 
