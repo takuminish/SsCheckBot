@@ -54,7 +54,7 @@ end
    def slack_post_text
     uri = URI.parse("https://hooks.slack.com/services/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")
     payload = {
-      text: "ssが更新されたよ~"
+      text: "<@西村拓海> ssが更新されたよ~"
     }
     Net::HTTP.post_form(uri, { payload: payload.to_json })
   end
