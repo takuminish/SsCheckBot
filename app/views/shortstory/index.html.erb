@@ -1,4 +1,10 @@
 <% @ss.reverse_each do |s| %>
 <h1><%= s.title %></h1>
 <h1><%= s.url %></h1>
+
+<%= s.tag.each do |t| %>
+<h2><%= t.name %></h2>
 <% end %>
+<% end %>
+
+

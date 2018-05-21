@@ -7,11 +7,22 @@ namespace :shortstory do
   new_ss_count = 0
   desc "ss_set"
   task :ss_set => :environment do
+
+
     doc = ss_scraping
-    for k in 0..5 do
-      title = doc.css(".entry-title")[k]['title']
-      url = doc.css(".entry-title")[k]['href']
-      ss = Shortstory.new(title: title,url: url)
+    5.times do |k| 
+      title  = doc.css(".entry-card-content")[k].children[1].children[0]["title"]
+      url  = doc.css(".entry-card-content")[k].children[1].children[0]["href"]
+      ss = Shortstory.new(title: title,url: url)         
+      tags  = doc.css(".entry-card-content")[k].children[3].children[3].css("a")
+      tags.each do |tag|
+        t = Tag.new(name: tag.content)
+        if t.save
+          ss.tag << t
+        else
+          ss.tag << Tag.find_by(name: tag.content)
+        end
+      end
       if ss.save
         if (new_ss_count == 0)
           slack_post_text
@@ -20,7 +31,6 @@ namespace :shortstory do
         slack_post(ss)
       end
     end
-
   end
 end
 
@@ -39,11 +49,17 @@ end
 
   def slack_post(ss)
     uri = URI.parse("https://hooks.slack.com/services/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")
+    fields = []
+    ss.tag.each_with_index do |t,k|
+      fields[k] = {:title=>t.name}
+    end
+    p fields.to_json
     payload = {
       attachments: [
         {
           title: ss.title,
-          text: ss.url,
+          title_link:  ss.url,
+          fields: fields,
           color: "#36a64f"
         }
       ]
