@@ -15,6 +15,7 @@ ActiveRecord::Schema.define(version: 2018_05_10_162259) do
   create_table "shortstories", force: :cascade do |t|
     t.string "title"
     t.string "url"
+    t.string "image"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

@@ -10,11 +10,13 @@ namespace :shortstory do
 
 
     doc = ss_scraping
-    5.times do |k| 
-      title  = doc.css(".entry-card-content")[k].children[1].children[0]["title"]
-      url  = doc.css(".entry-card-content")[k].children[1].children[0]["href"]
-      ss = Shortstory.new(title: title,url: url)         
-      tags  = doc.css(".entry-card-content")[k].children[3].children[3].css("a")
+    5.times do |k|
+      title = doc.css(".entry-card")[k].children[3].children[1].children[0]["title"]
+      url = doc.css(".entry-card")[k].children[3].children[1].children[0]["href"]
+      image = doc.css(".entry-card")[k].children[1].children[1].children[0]["src"]
+      p title
+      ss = Shortstory.new(title: title,url: url, image: image)         
+      tags  = doc.css(".entry-card")[k].children[3].children[3].children[3].css("a")
       tags.each do |tag|
         t = Tag.new(name: tag.content)
         if t.save
@@ -60,6 +62,7 @@ end
           title: ss.title,
           title_link:  ss.url,
           fields: fields,
+           thumb_url: ss.image,
           color: "#36a64f"
         }
       ]

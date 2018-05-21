@@ -5,7 +5,7 @@ RSpec.describe Shortstory, type: :model do
   let(:ss) { FactoryBot.create(:shortstory) }
 
   describe '登録確認' do
-    context 'titleとurlが' do
+    context 'titleとurlとimageが' do
       it '正しい時登録成功' do
         expect(ss).to be_valid
       end
