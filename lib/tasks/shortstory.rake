@@ -2,19 +2,18 @@
 require 'http'
 require 'json'
 require 'uri'
+require 'dotenv'
 
 namespace :shortstory do
-  new_ss_count = 0
   desc "ss_set"
   task :ss_set => :environment do
-
-
-    doc = ss_scraping
+    new_ss_count = 0
+    Dotenv.load
+    doc = ss_scraping(ENV["NOKOGIRI_URL"])
     5.times do |k|
       title = doc.css(".entry-card")[k].children[3].children[1].children[0]["title"]
       url = doc.css(".entry-card")[k].children[3].children[1].children[0]["href"]
       image = doc.css(".entry-card")[k].children[1].children[1].children[0]["src"]
-      p title
       ss = Shortstory.new(title: title,url: url, image: image)         
       tags  = doc.css(".entry-card")[k].children[3].children[3].children[3].css("a")
       tags.each do |tag|
@@ -27,18 +26,16 @@ namespace :shortstory do
       end
       if ss.save
         if (new_ss_count == 0)
-          slack_post_text
+          slack_post_text(ENV["SLACK_POST_URL"])
           new_ss_count += 1
         end
-        slack_post(ss)
+        slack_post(ss,ENV["SLACK_POST_URL"])
       end
     end
   end
 end
 
-   def ss_scraping
-    url = "http://www.lovelive-ss.com"
-
+   def ss_scraping(url)
     charset = nil
     html = open(url) do |f|
       charset = f.charset
@@ -49,20 +46,20 @@ end
     return doc
   end
 
-  def slack_post(ss)
-    uri = URI.parse("https://hooks.slack.com/services/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")
+  def slack_post(ss,url)
+    uri = URI.parse(url)
     fields = []
     ss.tag.each_with_index do |t,k|
       fields[k] = {:title=>t.name}
     end
-    p fields.to_json
+    p url
     payload = {
       attachments: [
         {
           title: ss.title,
           title_link:  ss.url,
           fields: fields,
-           thumb_url: ss.image,
+          thumb_url: ss.image,
           color: "#36a64f"
         }
       ]
@@ -70,8 +67,8 @@ end
     Net::HTTP.post_form(uri, { payload: payload.to_json })
   end
 
-   def slack_post_text
-    uri = URI.parse("https://hooks.slack.com/services/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")
+  def slack_post_text(url)
+     uri = URI.parse(url)
     payload = {
       text: "<@西村拓海> ssが更新されたよ~"
     }
