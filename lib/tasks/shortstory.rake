@@ -10,11 +10,24 @@ namespace :shortstory do
     new_ss_count = 0
     Dotenv.load
     doc = ss_scraping(ENV["NOKOGIRI_URL"])
-    5.times do |k|
-    title = doc.css(".title")[k].children[1].children[1].text
-    url = doc.css(".title")[k].children[1].children[1]["href"]
-    tag = doc.css(".words")[k].text
-
+    15.times do |k|
+      ss_title = doc.css(".title")[k].children[1].children[1].text
+      ss_url = doc.css(".title")[k].children[1].children[1]["href"]
+      ss = Shortstory.new(title: ss_title, url: ss_url)
+      tag = doc.css(".words")[k].text
+      ss_tag = Tag.new(name: tag)
+      if ss_tag.save
+        ss.tag << ss_tag
+      else
+        ss.tag << Tag.find_by(name: tag)
+      end
+      if ss.save
+        if (new_ss_count == 0)
+          slack_post_text(ENV["SLACK_POST_URL"])
+          new_ss_count += 1
+        end
+        slack_post(ss,ENV["SLACK_POST_URL"])
+      end
     end
   end
 end
@@ -29,21 +42,19 @@ end
     doc = Nokogiri::HTML.parse(html, nil, charset)
     return doc
   end
-=begin
+
   def slack_post(ss,url)
     uri = URI.parse(url)
     fields = []
     ss.tag.each_with_index do |t,k|
       fields[k] = {:title=>t.name}
     end
-    p url
     payload = {
       attachments: [
         {
           title: ss.title,
           title_link:  ss.url,
           fields: fields,
-          thumb_url: ss.image,
           color: "#36a64f"
         }
       ]
@@ -58,4 +69,3 @@ end
     }
     Net::HTTP.post_form(uri, { payload: payload.to_json })
   end
-=end
