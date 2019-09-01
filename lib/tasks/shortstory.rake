@@ -10,6 +10,8 @@ namespace :shortstory do
     new_ss_count = 0
     Dotenv.load
     doc = ss_scraping(ENV["NOKOGIRI_URL"])
+    p doc
+    p ENV["NOKOGIRI_URL"]
     15.times do |k|
       ss_title = doc.css(".title")[k].children[1].children[1].text
       ss_url = doc.css(".title")[k].children[1].children[1]["href"]
